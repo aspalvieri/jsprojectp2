@@ -1,0 +1,22 @@
+form(action=(task ? "/tasks/update" : "/tasks"), method="POST")
+    if (task)
+        input(type="hidden", name="id", value=task.id)
+
+    .form-group
+        label Title
+        input.form-control(name="task[title]", required, value=(task ? task.title : null))
+
+    .form-group
+        label Description
+        textarea.form-control(name="task[description]")
+            = task ? task.description : null
+
+    .form-group
+        label Status
+        select.form-control(name="task[status]", required)
+            each status in ["NOT STARTED","IN PROGRESS", "COMPLETE"]
+                option(value=status, selected=(task && task.status === status))
+                    = status
+    
+    .form-group
+        button.btn.btn-dark(type="submit") Submit

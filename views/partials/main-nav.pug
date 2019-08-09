@@ -1,0 +1,23 @@
+nav.navbar.fixed-top.navbar-expand-lg.navbar-light.bg-light
+    a.navbar-brand(href='/') Task Manager
+    button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+
+    #navbarSupportedContent.collapse.navbar-collapse
+        ul.navbar-nav.mr-auto
+            li.nav-item
+                a.nav-link(href='/') Home
+            if (isAuthenticated)
+                li.nav-item.dropdown
+                    a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false') Tasks
+                    .dropdown-menu
+                        a.dropdown-item(href='/tasks') Tasks
+                        a.dropdown-item(href='/tasks/new') New Task
+                li.nav-item
+                    form.nav-destroy(action="/logout", method="POST")
+                        input.destroy(type="submit", value="Logout")
+            if (!isAuthenticated)
+                li.nav-item
+                    a.nav-link(href="/users/new") Register
+                li.nav-item
+                    a.nav-link(href="/login") Login
