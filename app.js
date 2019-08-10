@@ -42,34 +42,53 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-//View paths
 const path = require("path");
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
-app.use("/css", express.static("assets/stylesheets"));
-//app.use("/js", express.static("assets/javascripts"));
-//app.use("/images", express.static("assets/images"));
 
-//Authentication helper
-const isAuthenticated = (req) => {
-    return req.session && req.session.userId;
+// //View paths
+// const path = require("path");
+// app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "pug");
+// app.use("/css", express.static("assets/stylesheets"));
+// //app.use("/js", express.static("assets/javascripts"));
+// //app.use("/images", express.static("assets/images"));
+
+// Our authentication helper
+const jwt = require("jsonwebtoken");
+const isAuthenticated = req => {
+  const token =
+    (req.cookies && req.cookies.token) ||
+    (req.body && req.body.token) ||
+    (req.query && req.query.token) ||
+    (req.headers && req.headers["x-access-token"]);
+
+  if (req.session.userId) return true;
+  if (!token) return false;
+
+  jwt.verify(token, "saltintoken", function(err, decoded) {
+    if (err) return false;
+    return true;
+  });
 };
 
 app.use((req, res, next) => {
-    req.isAuthenticated = () => {
-        if (!isAuthenticated(req)) {
-            req.flash("error", "You are not permitted to do this action.");
-            res.redirect("/");
-        }
-    }
+  req.isAuthenticated = () => {
+    if (!isAuthenticated(req)) return false;
 
-    res.locals.isAuthenticated = isAuthenticated(req);
-    next();
+    return true;
+  };
+
+  res.locals.isAuthenticated = isAuthenticated(req);
+  next();
 });
+// End of our authentication helper
 
-//Routes and paths
+// Our routes
 const routes = require("./routes.js");
-app.use("/", routes);
+app.use("/api", routes);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/build/index.html"));
+});
 
 const port = (process.env.PORT || 4000);
 app.listen(port, () => console.log(`Listening on ${port}`));

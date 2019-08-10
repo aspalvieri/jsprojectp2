@@ -1,42 +1,46 @@
-const User = require("../models/user.js");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
-exports.login = (req, res) => {
-    res.render("sessions/login", {
-        title: "Login"
+exports.authenticate = (req, res) => {
+  console.log("The body", req.body.email);
+  User.findOne({
+    email: req.body.email
+  })
+    .then(user => {
+      user.authenticate(req.body.password, (err, isMatch) => {
+        if (err) throw new Error(err);
+
+        if (isMatch) {
+          req.session.userId = user.id;
+
+          const token = jwt.sign({ payload: req.body.email }, "saltintoken", {
+            expiresIn: "1h"
+          });
+          res
+            .cookie("token", token, { httpOnly: true })
+            .status(201)
+            .send({ success: "Authenticated successfully" });
+        } else {
+          res.status(401).json({ error: "Your credentials do not match" });
+        }
+      });
+    })
+    .catch(err => {
+      res.status(404).json(err);
     });
 };
 
-exports.authenticate = (req, res) => {
-    User.findOne({
-        email: req.body.email
-    })
-        .then(user => {
-            if (!user)
-                throw new Error("Your credentials don't match.");
-            user.authenticate(req.body.password, (err, isMatch) => {
-                if (err)
-                    throw new Error(err);
-
-                if (isMatch) {
-                    req.session.userId = user.id;
-                    req.flash("success", "You are now logged in.");
-                    res.redirect("/tasks");
-                }
-                else {
-                    req.flash("error", "Your credentials don't match.");
-                    res.redirect("/login");
-                }
-            });
-        })
-        .catch(err => {
-            console.log(`ERROR: ${err}`);
-            req.flash("error", `ERROR: ${err}`);
-            res.redirect("/login");
-        });
-};
+exports.isAuthenticated = (req, res) => {
+    res.json(req.isAuthenticated());
+}
 
 exports.logout = (req, res) => {
-    req.session.userId = null;
-    req.flash("success", "You are now logged out.");
-    res.redirect("/");
+  if (!req.isAuthenticated())
+    res.status(401).send({ error: "Could not authenticate request" });
+
+  req.session.userId = null;
+  res
+    .clearCookie("token")
+    .status(200)
+    .send({ success: "Your are now logged out" });
 };

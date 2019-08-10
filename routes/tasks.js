@@ -5,7 +5,7 @@ const router = require('express').Router();
 const TasksController = require('../controllers/tasksController.js');
 
 // Our routes
-router.get(`/new`, TasksController.new);
+//router.get(`/new`, TasksController.new);
 router.get(`/`, TasksController.index);
 router.get(`/:id`, TasksController.show);
 router.get(`/:id/edit`, TasksController.edit);
