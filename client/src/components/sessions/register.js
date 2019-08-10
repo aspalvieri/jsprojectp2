@@ -40,7 +40,7 @@ function Register() {
   return (
     <div className="container">
       <header>
-        <h1>New User</h1>
+        <h1 style={{textAlign: "center"}}>New User</h1>
       </header>
       <div>
         <form onSubmit={handleSubmit}>

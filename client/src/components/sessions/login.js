@@ -37,7 +37,7 @@ function Login() {
   return (
     <div className="container">
       <header>
-        <h1>Login</h1>
+        <h1 style={{textAlign: "center"}}>Login</h1>
       </header>
       <div>
         <form onSubmit={handleSubmit}>

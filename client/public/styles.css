@@ -6,21 +6,15 @@ body,
   width: 100%;
 }
 
-/* Photo by Marco Molitor on Unsplash */
-.home-cta {
-  background: url('./images/background.jpg');
-  background-size: cover;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body {
+    background-color: aliceblue;
 }
-
-.home-cta>h1 {
-  color: #fff;
-  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
-  font-size: 5rem;
+.navbar {
+    background-color: rgb(174, 224, 255) !important;
+}
+.container {
+    background-color: lightgoldenrodyellow;
+    padding: 10px;
 }
 
 .NOT_STARTED {
